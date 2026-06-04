@@ -1,0 +1,735 @@
+; Dolby Atmos for Gaming
+; Copyright (c) 2018 Dolby Laboratories, Inc. All rights reserved.
+
+[Version]
+Signature    = "$Windows NT$"
+Class        = MEDIA
+ClassGuid    = {4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider     = %ProviderName%
+DriverVer    = 11/15/2018,3.20201.228.0
+
+[SourceDisksNames]
+222=%DiskDescription%,,,
+
+[SourceDisksFiles]
+;; 64-bit
+DolbyAPOv251gm.dll=222
+DolbyAPOvlldpgm.dll=222
+DolbyAPOvlldp120.dll=222
+DolbyDspVlldp.dll=222
+DAX3API.exe=222
+DAX3APIDLL.dll=222
+TuningFileParser.dll=222
+CaptureStreamMonitor.dll=222
+Headphone_Default_Generic_Small_Gaming_vlldp1.2.xml=222
+Headphone_Default_Generic_Medium_Gaming_vlldp1.2.xml=222
+Headphone_Default_Generic_Large_Gaming_vlldp1.2.xml=222
+Headphone_Default_Generic_Default_Gaming_vlldp1.2.xml=222
+Default.xml=222
+Runtime.xml=222
+
+[DestinationDirs]
+DAX3.APO_CopyList_amd64 = 11     ; DIRID_SYSTEM  = %windir%\system32
+DAX3.SVC_CopyList = 11, dolbyaposvc
+DAX3.Runtime_CopyList = 16427, Dolby\DAX3
+
+[DAX3.APO_CopyList_amd64]
+DolbyAPOv251gm.dll
+DolbyAPOvlldpgm.dll
+DolbyAPOvlldp120.dll
+
+[DAX3.SVC_CopyList]
+DolbyDspVlldp.dll
+DAX3API.exe
+DAX3APIDLL.dll
+TuningFileParser.dll
+CaptureStreamMonitor.dll
+Headphone_Default_Generic_Small_Gaming_vlldp1.2.xml
+Headphone_Default_Generic_Medium_Gaming_vlldp1.2.xml
+Headphone_Default_Generic_Large_Gaming_vlldp1.2.xml
+Headphone_Default_Generic_Default_Gaming_vlldp1.2.xml
+Default.xml
+
+[DAX3.Runtime_CopyList]
+Runtime.xml
+
+[DAX3.Register_DLLs_amd64]
+11,,DolbyAPOv251gm.dll,1
+11,,DolbyAPOvlldpgm.dll,1
+11,,DolbyAPOvlldp120.dll,1
+11,dolbyaposvc,DolbyDspVlldp.dll,1
+
+[Manufacturer]
+%MfgName% = MfgModelSection, ntamd64
+
+;============================================================================
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[MfgModelSection.ntamd64]
+%HdAudioFunctionDriver.Generic.DeviceDesc%  = HdAudModel, ,HDAUDIO\FUNC_01
+
+[HdAudModel.ntamd64]
+Include      = ks.inf,wdmaudio.inf
+Needs        = KS.Registration, WDMAUDIO.Registration
+CopyFiles    = DAX3.APO_CopyList_amd64, DAX3.SVC_CopyList, DAX3.Runtime_CopyList
+DelReg	     = DAX3.DelReg
+AddReg       = HdAudModel.AddReg, DisableProtectedAudioDG.AddReg
+RegisterDlls = DAX3.Register_DLLs_amd64
+AddProperty  = HdAudBranding.AddProperty
+
+[HdAudModel.ntamd64.HW]
+AddReg = HdAudSecurity.AddReg
+
+; Called by needs entry in oem inf -- DO NOT REMOVE
+[HdAudModel.ntamd64.Services]
+AddService = HdAudAddService, 0x00000002, HdAud_Service_Install
+AddService = DolbyDAXAPI, 0x00000800, DolbyAPO_ServiceInstall
+
+[HdAudModel.ntamd64.Software]
+AddSoftware = DolbyAPOComponent_componentsoftware,,DolbyAPOComponent_SoftwareInstall
+
+[HdAud_Service_Install]
+DisplayName   = "Service for High Definition Audio (WDM)"
+ServiceType   = 1
+StartType     = 3
+ErrorControl  = 1
+ServiceBinary = %10%\system32\drivers\HdAudio.sys
+
+[DolbyAPO_ServiceInstall]
+DisplayName   = "Dolby DAX API Service"
+Description   = "Dolby DAX API Service is used by Dolby DAX applications to control DolbyApo components in the system."
+ServiceType   = 0x00000010
+StartType     = 2
+ErrorControl  = 1
+ServiceBinary = %10%\system32\dolbyaposvc\DAX3API.exe
+
+[DolbyAPOComponent_SoftwareInstall]
+SoftwareType  = 2
+SoftwareID    = pfn://DolbyLaboratories.DolbyAtmosforGaming_rz1tebttyb220
+
+[DAX3.DelReg]
+HKLM,"Software\Dolby\DAX"
+
+[DisableProtectedAudioDG.AddReg]
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Audio","DisableProtectedAudioDG",0x00010001,0x1
+
+[HdAudModel.AddReg]
+
+; Primary Speaker
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Wave,1,,%PrimarySpeakerWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Wave,2,,%PrimarySpeaker2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Wave,3,,%PrimarySpeaker3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Wave,4,,%PrimarySpeaker4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Wave,5,,%PrimarySpeaker5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Mixer,1,,%PrimarySpeakerTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Mixer,2,,%PrimarySpeaker2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Mixer,3,,%PrimarySpeaker3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Mixer,4,,%PrimarySpeaker4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\FriendlyNames\Mixer,5,,%PrimarySpeaker5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Line Out
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Wave,1,,%PrimarySpeakerWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Wave,2,,%PrimarySpeaker2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Wave,3,,%PrimarySpeaker3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Wave,4,,%PrimarySpeaker4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Wave,5,,%PrimarySpeaker5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Mixer,1,,%PrimarySpeakerTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Mixer,2,,%PrimarySpeaker2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Mixer,3,,%PrimarySpeaker3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Mixer,4,,%PrimarySpeaker4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\FriendlyNames\Mixer,5,,%PrimarySpeaker5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eLineOut%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Line Connector
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Wave,1,,%PrimaryLineConnectorWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Wave,2,,%PrimaryLineConnector2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Wave,3,,%PrimaryLineConnector3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Wave,4,,%PrimaryLineConnector4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Wave,5,,%PrimaryLineConnector5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Mixer,1,,%PrimaryLineConnectorTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Mixer,2,,%PrimaryLineConnector2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Mixer,3,,%PrimaryLineConnector3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Mixer,4,,%PrimaryLineConnector4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\FriendlyNames\Mixer,5,,%PrimaryLineConnector5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eLineConnector%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Independent Headphone
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Wave,1,,%IndependentHeadphoneWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Wave,2,,%IndependentHeadphone2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Wave,3,,%IndependentHeadphone3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Wave,4,,%IndependentHeadphone4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Wave,5,,%IndependentHeadphone5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Mixer,1,,%IndependentHeadphoneTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Mixer,2,,%IndependentHeadphone2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Mixer,3,,%IndependentHeadphone3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Mixer,4,,%IndependentHeadphone4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\FriendlyNames\Mixer,5,,%IndependentHeadphone5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eHeadphone%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Spdif Out + Speaker (1)
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\FriendlyNames\Wave,1,,%SpdifOutSpeakerWaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\FriendlyNames\Mixer,1,,%SpdifOutSpeakerTopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Spdif Out + Line Out (1)
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\FriendlyNames\Wave,1,,%SpdifOutLineOutWaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\FriendlyNames\Mixer,1,,%SpdifOutLineOutTopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpdifOutLineOut%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Spdif Out (5)
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Wave,1,,%DigitalOutputWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Wave,2,,%DigitalOutput2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Wave,3,,%DigitalOutput3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Wave,4,,%DigitalOutput4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Wave,5,,%DigitalOutput5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Mixer,1,,%DigitalOutputTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Mixer,2,,%DigitalOutput2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Mixer,3,,%DigitalOutput3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Mixer,4,,%DigitalOutput4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\FriendlyNames\Mixer,5,,%DigitalOutput5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eSpdifOut%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; HDMI Out (5)
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Wave,1,,%HDMIOutputWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Wave,2,,%HDMIOutput2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Wave,3,,%HDMIOutput3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Wave,4,,%HDMIOutput4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Wave,5,,%HDMIOutput5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Mixer,1,,%HDMIOutputTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Mixer,2,,%HDMIOutput2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Mixer,3,,%HDMIOutput3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Mixer,4,,%HDMIOutput4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\FriendlyNames\Mixer,5,,%HDMIOutput5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eHDMIOut%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Duplicated Headphone + Speaker (5)
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Wave,1,,%DuplicatedHpSpeakerWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Wave,2,,%DuplicatedHpSpeaker2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Wave,3,,%DuplicatedHpSpeaker3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Wave,4,,%DuplicatedHpSpeaker4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Wave,5,,%DuplicatedHpSpeaker5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Mixer,1,,%DuplicatedHpSpeakerTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Mixer,2,,%DuplicatedHpSpeaker2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Mixer,3,,%DuplicatedHpSpeaker3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Mixer,4,,%DuplicatedHpSpeaker4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\FriendlyNames\Mixer,5,,%DuplicatedHpSpeaker5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Duplicated Headphone + Line Out (5)
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Wave,1,,%DuplicatedHpLineOutWaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Wave,2,,%DuplicatedHpLineOut2WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Wave,3,,%DuplicatedHpLineOut3WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Wave,4,,%DuplicatedHpLineOut4WaveDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Wave,5,,%DuplicatedHpLineOut5WaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Mixer,1,,%DuplicatedHpLineOutTopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Mixer,2,,%DuplicatedHpLineOut2TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Mixer,3,,%DuplicatedHpLineOut3TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Mixer,4,,%DuplicatedHpLineOut4TopoDeviceName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\FriendlyNames\Mixer,5,,%DuplicatedHpLineOut5TopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedHpLineOut%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Mono Line Out + Speaker (1)
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\FriendlyNames\Wave,1,,%DuplicatedIntSpeakerExtLineOutWaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\FriendlyNames\Mixer,1,,%DuplicatedIntSpeakerExtLineOutTopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedLineOutSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+; Mono Speaker + Speaker (1)
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\FriendlyNames\Wave,1,,%DuplicatedIntSpeakerExtSpeakerWaveDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\FriendlyNames\Mixer,1,,%DuplicatedIntSpeakerExtSpeakerTopoDeviceName%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_ItemNameDisplay%,,%FX_FriendlyName%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_FX_StreamEffectClsid%,,%FX_STREAM_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_FX_ModeEffectClsid%,,%FX_MODE_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_FX_EndpointEffectClsid%,,%FX_ENDPOINT_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_FX_UiClsid%,,%FX_UI_CLSID%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_Enable_DolbyDAX2%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_SFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_MFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\FX\0,%PKEY_EFX_ProcessingModes_Supported_For_Streaming%,0x00010000,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\EP\0,%PKEY_DAX2_EP_DAPV2_Version_String%,,%DAP_CPDP_VERSION%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+HKR,DeviceInterfaces\%KSNAME_eDuplicatedSpeakerSpeaker%\DeviceParameters\EP\0,%PKEY_AudioEngine_OEMFormat%, 0x00000001, 41,00,C8,70,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,DC,05,00,08,00,20,00,16,00,18,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+[HdAudBranding.AddProperty]
+DeviceBrandingIcon,,,,"%1%\HDAudio.sys,-203"
+DeviceVendorWebSite,,,,"http://www.dolby.com"
+
+; Called by needs entry in oem inf -- DO NOT REMOVE
+[HdAudSecurity.AddReg]
+; FILE_DEVICE_SOUND
+HKR,,DeviceType,0x10001,0x0000001D
+; SDDL_DEVOBJ_SYS_ALL_ADM_RWX_WORLD_RWX_RES_RWX
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GRGWGX;;;BA)(A;;GRGWGX;;;WD)(A;;GRGWGX;;;RC)"
+
+[Strings]
+ProviderName                             = "Dolby Laboratories, Inc."
+MfgName                                  = "Dolby Laboratories, Inc."
+HdAudioFunctionDriver.Generic.DeviceDesc = "Dolby Atmos for Gaming"
+DAP_CPDP_VERSION			 = "0.4.0"
+
+; These are the name strings for the wave miniports displayed in mmsys.cpl
+; Primary LineOut, HP, LineIn & Mic in are multi instance capable (up to 5 of each)
+PrimarySpeakerWaveDeviceName  =        "HD Audio Speaker"         ; {PlaceHolder="HD Audio"}
+PrimarySpeakerTopoDeviceName  =        "HD Audio Speaker mixer"   ; {PlaceHolder="HD Audio"}
+PrimarySpeaker2WaveDeviceName =        "HD Audio Speaker 2"       ; {PlaceHolder="HD Audio"}
+PrimarySpeaker2TopoDeviceName =        "HD Audio Speaker mixer 2" ; {PlaceHolder="HD Audio"}
+PrimarySpeaker3WaveDeviceName =        "HD Audio Speaker 3"       ; {PlaceHolder="HD Audio"}
+PrimarySpeaker3TopoDeviceName =        "HD Audio Speaker mixer 3" ; {PlaceHolder="HD Audio"}
+PrimarySpeaker4WaveDeviceName =        "HD Audio Speaker 4"       ; {PlaceHolder="HD Audio"}
+PrimarySpeaker4TopoDeviceName =        "HD Audio Speaker mixer 4" ; {PlaceHolder="HD Audio"}
+PrimarySpeaker5WaveDeviceName =        "HD Audio Speaker 5"       ; {PlaceHolder="HD Audio"}
+PrimarySpeaker5TopoDeviceName =        "HD Audio Speaker mixer 5" ; {PlaceHolder="HD Audio"}
+
+PrimaryLineConnectorWaveDeviceName  =  "HD Audio Line connector"         ; {PlaceHolder="HD Audio"}
+PrimaryLineConnectorTopoDeviceName  =  "HD Audio Line connector mixer"   ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector2WaveDeviceName =  "HD Audio Line connector 2"       ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector2TopoDeviceName =  "HD Audio Line connector mixer 2" ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector3WaveDeviceName =  "HD Audio Line connector 3"       ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector3TopoDeviceName =  "HD Audio Line connector mixer 3" ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector4WaveDeviceName =  "HD Audio Line connector 4"       ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector4TopoDeviceName =  "HD Audio Line connector mixer 4" ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector5WaveDeviceName =  "HD Audio Line connector 5"       ; {PlaceHolder="HD Audio"}
+PrimaryLineConnector5TopoDeviceName =  "HD Audio Line connector mixer 5" ; {PlaceHolder="HD Audio"}
+
+IndependentHeadphoneWaveDeviceName  =  "HD Audio Headphone"          ; {PlaceHolder="HD Audio"}
+IndependentHeadphoneTopoDeviceName  =  "HD Audio Headphone mixer"    ; {PlaceHolder="HD Audio"}
+IndependentHeadphone2WaveDeviceName =  "HD Audio Headphone 2"        ; {PlaceHolder="HD Audio"}
+IndependentHeadphone2TopoDeviceName =  "HD Audio Headphone 2 mixer"  ; {PlaceHolder="HD Audio"}
+IndependentHeadphone3WaveDeviceName =  "HD Audio Headphone 3"        ; {PlaceHolder="HD Audio"}
+IndependentHeadphone3TopoDeviceName =  "HD Audio Headphone 3 mixer " ; {PlaceHolder="HD Audio"}
+IndependentHeadphone4WaveDeviceName =  "HD Audio Headphone 4"        ; {PlaceHolder="HD Audio"}
+IndependentHeadphone4TopoDeviceName =  "HD Audio Headphone 4 mixer"  ; {PlaceHolder="HD Audio"}
+IndependentHeadphone5WaveDeviceName =  "HD Audio Headphone 5"        ; {PlaceHolder="HD Audio"}
+IndependentHeadphone5TopoDeviceName =  "HD Audio Headphone 5 mixer"  ; {PlaceHolder="HD Audio"}
+
+SpdifOutSpeakerWaveDeviceName = "HD Audio Spdif Speaker"       ; {PlaceHolder="HD Audio"}
+SpdifOutSpeakerTopoDeviceName = "HD Audio Spdif Speaker mixer" ; {PlaceHolder="HD Audio"}
+; 
+; Notice here that the friendly name for this device is the same as with SpdifOutSpeaker
+; above. This is because the two devices behave nearly the same way. The only real
+; difference is that the Speaker collection of widgets will have an attached Amp.
+;
+SpdifOutLineOutWaveDeviceName = "HD Audio Spdif Speaker"       ; {PlaceHolder="HD Audio"}
+SpdifOutLineOutTopoDeviceName = "HD Audio Spdif Speaker mixer" ; {PlaceHolder="HD Audio"}
+
+;
+; SPDIF Out
+;
+
+DigitalOutputWaveDeviceName =   "HD Audio SPDIF out"       ; {PlaceHolder="HD Audio"}
+DigitalOutputTopoDeviceName =   "HD Audio SPDIF out mixer" ; {PlaceHolder="HD Audio"}
+
+DigitalOutput2WaveDeviceName =   "HD Audio SPDIF out 2"       ; {PlaceHolder="HD Audio"}
+DigitalOutput2TopoDeviceName =   "HD Audio SPDIF out 2 mixer" ; {PlaceHolder="HD Audio"}
+
+DigitalOutput3WaveDeviceName =   "HD Audio SPDIF out 3"       ; {PlaceHolder="HD Audio"}
+DigitalOutput3TopoDeviceName =   "HD Audio SPDIF out 3 mixer" ; {PlaceHolder="HD Audio"}
+
+DigitalOutput4WaveDeviceName =   "HD Audio SPDIF out 4"       ; {PlaceHolder="HD Audio"}
+DigitalOutput4TopoDeviceName =   "HD Audio SPDIF out 4mixer" ; {PlaceHolder="HD Audio"}
+
+DigitalOutput5WaveDeviceName =   "HD Audio SPDIF out 5"       ; {PlaceHolder="HD Audio"}
+DigitalOutput5TopoDeviceName =   "HD Audio SPDIF out 5 mixer" ; {PlaceHolder="HD Audio"}
+
+;
+; HDMI Out 
+;
+
+HDMIOutputWaveDeviceName =   "HD Audio HDMI out"       ; {PlaceHolder="HD Audio"}
+HDMIOutputTopoDeviceName =   "HD Audio HDMI out mixer" ; {PlaceHolder="HD Audio"}
+
+HDMIOutput2WaveDeviceName =   "HD Audio HDMI out 2"       ; {PlaceHolder="HD Audio"}
+HDMIOutput2TopoDeviceName =   "HD Audio HDMI out mixer 2" ; {PlaceHolder="HD Audio"}
+
+HDMIOutput3WaveDeviceName =   "HD Audio HDMI out 3"       ; {PlaceHolder="HD Audio"}
+HDMIOutput3TopoDeviceName =   "HD Audio HDMI out mixer 3" ; {PlaceHolder="HD Audio"}
+
+HDMIOutput4WaveDeviceName =   "HD Audio HDMI out 4"       ; {PlaceHolder="HD Audio"}
+HDMIOutput4TopoDeviceName =   "HD Audio HDMI out mixer 4" ; {PlaceHolder="HD Audio"}
+
+HDMIOutput5WaveDeviceName =   "HD Audio HDMI out 5"       ; {PlaceHolder="HD Audio"}
+HDMIOutput5TopoDeviceName =   "HD Audio HDMI out mixer 5" ; {PlaceHolder="HD Audio"}
+
+;
+; Duplicated Hp Render Model & Add Reg
+;
+
+DuplicatedHpSpeakerWaveDeviceName = "HD Audio Headphone/Speakers"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeakerTopoDeviceName = "HD Audio Headphone/Speakers mixer" ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker2WaveDeviceName = "HD Audio Headphone/Speakers 2"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker2TopoDeviceName = "HD Audio Headphone/Speakers mixer 2" ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker3WaveDeviceName = "HD Audio Headphone/Speakers 3"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker3TopoDeviceName = "HD Audio Headphone/Speakers mixer 3" ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker4WaveDeviceName = "HD Audio Headphone/Speakers 4"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker4TopoDeviceName = "HD Audio Headphone/Speakers mixer 4" ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker5WaveDeviceName = "HD Audio Headphone/Speakers 5"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpSpeaker5TopoDeviceName = "HD Audio Headphone/Speakers mixer 5" ; {PlaceHolder="HD Audio"}
+
+;
+; Note that Line-out devices are just like Speaker but without the amp, thus, the 
+; friendly names that we provide match the Speaker case above.
+; 
+
+DuplicatedHpLineOutWaveDeviceName = "HD Audio Headphone/Speakers"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOutTopoDeviceName = "HD Audio Headphone/Speakers mixer" ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut2WaveDeviceName = "HD Audio Headphone/Speakers 2"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut2TopoDeviceName = "HD Audio Headphone/Speakers mixer 2" ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut3WaveDeviceName = "HD Audio Headphone/Speakers 3"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut3TopoDeviceName = "HD Audio Headphone/Speakers mixer 3" ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut4WaveDeviceName = "HD Audio Headphone/Speakers 4"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut4TopoDeviceName = "HD Audio Headphone/Speakers mixer 4" ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut5WaveDeviceName = "HD Audio Headphone/Speakers 5"       ; {PlaceHolder="HD Audio"}
+DuplicatedHpLineOut5TopoDeviceName = "HD Audio Headphone/Speakers mixer 5" ; {PlaceHolder="HD Audio"}
+
+;
+; Redirected internal speaker friendly names
+;
+
+DuplicatedIntSpeakerExtLineOutWaveDeviceName = "HD Audio Int Spkr/Ext LineOut"       ; {PlaceHolder="HD Audio"}
+DuplicatedIntSpeakerExtLineOutTopoDeviceName = "HD Audio Int Spkr/Ext LineOut Mixer" ; {PlaceHolder="HD Audio"}
+
+DuplicatedIntSpeakerExtSpeakerWaveDeviceName = "HD Audio Internal/External Spkr"       ; {PlaceHolder="HD Audio"}
+DuplicatedIntSpeakerExtSpeakerTopoDeviceName = "HD Audio Internal/External Spkr Mixer" ; {PlaceHolder="HD Audio"}
+
+; These are the strings passed to PcRegisterSubdevice for wave ports
+
+;Non-localizable
+KSNAME_eSpeaker = "eSpeaker"           ; non-localizable
+KSNAME_eSpeakerWave = "eSpeakerWave"   ; non-localizable
+KSNAME_eSpeaker2Wave = "eSpeaker2Wave" ; non-localizable
+KSNAME_eSpeaker3Wave = "eSpeaker3Wave" ; non-localizable
+KSNAME_eSpeaker4Wave = "eSpeaker4Wave" ; non-localizable
+KSNAME_eSpeaker5Wave = "eSpeaker5Wave" ; non-localizable
+KSNAME_eSpeakerTopo = "eSpeakerTopo"   ; non-localizable
+KSNAME_eSpeaker2Topo = "eSpeaker2Topo" ; non-localizable
+KSNAME_eSpeaker3Topo = "eSpeaker3Topo" ; non-localizable
+KSNAME_eSpeaker4Topo = "eSpeaker4Topo" ; non-localizable
+KSNAME_eSpeaker5Topo = "eSpeaker5Topo" ; non-localizable
+
+KSNAME_eLineOut = "eLineOut"           ; non-localizable
+KSNAME_eLineOutWave = "eLineOutWave"   ; non-localizable
+KSNAME_eLineOut2Wave = "eLineOut2Wave" ; non-localizable
+KSNAME_eLineOut3Wave = "eLineOut3Wave" ; non-localizable
+KSNAME_eLineOut4Wave = "eLineOut4Wave" ; non-localizable
+KSNAME_eLineOut5Wave = "eLineOut5Wave" ; non-localizable
+KSNAME_eLineOutTopo = "eLineOutTopo"   ; non-localizable
+KSNAME_eLineOut2Topo = "eLineOut2Topo" ; non-localizable
+KSNAME_eLineOut3Topo = "eLineOut3Topo" ; non-localizable
+KSNAME_eLineOut4Topo = "eLineOut4Topo" ; non-localizable
+KSNAME_eLineOut5Topo = "eLineOut5Topo" ; non-localizable
+
+KSNAME_eLineConnector = "eLineConnector"           ; non-localizable
+KSNAME_eLineConnectorWave = "eLineConnectorWave"   ; non-localizable
+KSNAME_eLineConnector2Wave = "eLineConnector2Wave" ; non-localizable
+KSNAME_eLineConnector3Wave = "eLineConnector3Wave" ; non-localizable
+KSNAME_eLineConnector4Wave = "eLineConnector4Wave" ; non-localizable
+KSNAME_eLineConnector5Wave = "eLineConnector5Wave" ; non-localizable
+KSNAME_eLineConnectorTopo = "eLineConnectorTopo"   ; non-localizable
+KSNAME_eLineConnector2Topo = "eLineConnector2Topo" ; non-localizable
+KSNAME_eLineConnector3Topo = "eLineConnector3Topo" ; non-localizable
+KSNAME_eLineConnector4Topo = "eLineConnector4Topo" ; non-localizable
+KSNAME_eLineConnector5Topo = "eLineConnector5Topo" ; non-localizable
+
+KSNAME_eHeadphone ="eHeadphone"            ; non-localizable
+KSNAME_eHeadphoneWave ="eHeadphoneWave"    ; non-localizable
+KSNAME_eHeadphone2Wave ="eHeadphone2Wave"  ; non-localizable
+KSNAME_eHeadphone3Wave ="eHeadphone3Wave"  ; non-localizable
+KSNAME_eHeadphone4Wave ="eHeadphone4Wave"  ; non-localizable
+KSNAME_eHeadphone5Wave ="eHeadphone5Wave"  ; non-localizable
+KSNAME_eHeadphoneTopo = "eHeadphoneTopo"   ; non-localizable
+KSNAME_eHeadphone2Topo = "eHeadphone2Topo" ; non-localizable
+KSNAME_eHeadphone3Topo = "eHeadphone3Topo" ; non-localizable
+KSNAME_eHeadphone4Topo = "eHeadphone4Topo" ; non-localizable
+KSNAME_eHeadphone5Topo = "eHeadphone5Topo" ; non-localizable
+
+KSNAME_eSpdifOut = "eSpdifOut"           ; non-localizable
+KSNAME_eSpdifOutWave = "eSpdifOutWave"   ; non-localizable
+KSNAME_eSpdifOutTopo = "eSpdifOutTopo"   ; non-localizable 
+KSNAME_eSpdifOut2Wave = "eSpdifOut2Wave" ; non-localizable
+KSNAME_eSpdifOut2Topo = "eSpdifOut2Topo" ; non-localizable 
+KSNAME_eSpdifOut3Wave = "eSpdifOut2Wave" ; non-localizable
+KSNAME_eSpdifOut3Topo = "eSpdifOut2Topo" ; non-localizable 
+KSNAME_eSpdifOut4Wave = "eSpdifOut2Wave" ; non-localizable
+KSNAME_eSpdifOut4Topo = "eSpdifOut2Topo" ; non-localizable
+KSNAME_eSpdifOut5Wave = "eSpdifOut2Wave" ; non-localizable
+KSNAME_eSpdifOut5Topo = "eSpdifOut2Topo" ; non-localizable 
+
+KSNAME_eHDMIOut = "eHDMIOut"           ; non-localizable
+KSNAME_eHDMIOutWave = "eHDMIOutWave"   ; non-localizable
+KSNAME_eHDMIOutTopo = "eHDMIOutTopo"   ; non-localizable 
+KSNAME_eHDMIOut2Wave = "eHDMIOut2Wave" ; non-localizable
+KSNAME_eHDMIOut2Topo = "eHDMIOut2Topo" ; non-localizable 
+KSNAME_eHDMIOut3Wave = "eHDMIOut3Wave" ; non-localizable
+KSNAME_eHDMIOut3Topo = "eHDMIOut3Topo" ; non-localizable 
+KSNAME_eHDMIOut4Wave = "eHDMIOut4Wave" ; non-localizable
+KSNAME_eHDMIOut4Topo = "eHDMIOut4Topo" ; non-localizable 
+KSNAME_eHDMIOut5Wave = "eHDMIOut5Wave" ; non-localizable
+KSNAME_eHDMIOut5Topo = "eHDMIOut5Topo" ; non-localizable 
+
+KSNAME_eSpdifOutSpeaker = "eSpdifOutSpeaker"         ; non-localizable
+KSNAME_eSpdifOutSpeakerWave = "eSpdifOutSpeakerWave" ; non-localizable
+KSNAME_eSpdifOutSpeakerTopo = "eSpdifOutSpeakerTopo" ; non-localizable
+
+KSNAME_eSpdifOutLineOut = "eSpdifOutLineOut"         ; non-localizable
+KSNAME_eSpdifOutLineOutWave = "eSpdifOutLineOutWave" ; non-localizable
+KSNAME_eSpdifOutLineOutTopo = "eSpdifOutLineOutTopo" ; non-localizable
+
+KSNAME_eDuplicatedHpSpeaker = "eDuplicatedHpSpeaker"           ; non-localizable
+KSNAME_eDuplicatedHpSpeakerWave = "eDuplicatedHpSpeakerWave"   ; non-localizable
+KSNAME_eDuplicatedHpSpeakerTopo = "eDuplicatedHpSpeakerTopo"   ; non-localizable
+KSNAME_eDuplicatedHpSpeaker2Wave = "eDuplicatedHpSpeaker2Wave" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker2Topo = "eDuplicatedHpSpeaker2Topo" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker3Wave = "eDuplicatedHpSpeaker3Wave" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker3Topo = "eDuplicatedHpSpeaker3Topo" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker4Wave = "eDuplicatedHpSpeaker4Wave" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker4Topo = "eDuplicatedHpSpeaker4Topo" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker5Wave = "eDuplicatedHpSpeaker5Wave" ; non-localizable
+KSNAME_eDuplicatedHpSpeaker5Topo = "eDuplicatedHpSpeaker5Topo" ; non-localizable
+
+KSNAME_eDuplicatedHpLineOut = "eDuplicatedHpLineOut"           ; non-localizable
+KSNAME_eDuplicatedHpLineOutWave = "eDuplicatedHpLineOutWave"   ; non-localizable
+KSNAME_eDuplicatedHpLineOutTopo = "eDuplicatedHpLineOutTopo"   ; non-localizable
+KSNAME_eDuplicatedHpLineOut2Wave = "eDuplicatedHpLineOut2Wave" ; non-localizable
+KSNAME_eDuplicatedHpLineOut2Topo = "eDuplicatedHpLineOut2Topo" ; non-localizable
+KSNAME_eDuplicatedHpLineOut3Wave = "eDuplicatedHpLineOut3Wave" ; non-localizable
+KSNAME_eDuplicatedHpLineOut3Topo = "eDuplicatedHpLineOut3Topo" ; non-localizable
+KSNAME_eDuplicatedHpLineOut4Wave = "eDuplicatedHpLineOut4Wave" ; non-localizable
+KSNAME_eDuplicatedHpLineOut4Topo = "eDuplicatedHpLineOut4Topo" ; non-localizable
+KSNAME_eDuplicatedHpLineOut5Wave = "eDuplicatedHpLineOut5Wave" ; non-localizable
+KSNAME_eDuplicatedHpLineOut5Topo = "eDuplicatedHpLineOut5Topo" ; non-localizable
+
+KSNAME_eDuplicatedLineOutSpeaker = "eDuplicatedLineOutSpeaker"           ; non-localizable
+KSNAME_eDuplicatedLineOutSpeakerWave = "eDuplicatedLineOutSpeakerWave"   ; non-localizable
+KSNAME_eDuplicatedLineOutSpeakerTopo = "eDuplicatedLineOutSpeakerTopo"   ; non-localizable
+
+KSNAME_eDuplicatedSpeakerSpeaker = "eDuplicatedSpeakerSpeaker"           ; non-localizable   
+KSNAME_eDuplicatedSpeakerSpeakerWave = "eDuplicatedSpeakerSpeakerWave"   ; non-localizable   
+KSNAME_eDuplicatedSpeakerSpeakerTopo = "eDuplicatedSpeakerSpeakerTopo"   ; non-localizable   
+
+;
+; KSCategory Guids
+; 
+
+KSCATEGORY_AUDIO    = "{6994AD04-93EF-11D0-A3CC-00A0C9223196}" ; non-localizable
+KSCATEGORY_RENDER   = "{65E8773E-8F56-11D0-A3B9-00A0C9223196}" ; non-localizable
+KSCATEGORY_CAPTURE  = "{65E8773D-8F56-11D0-A3B9-00A0C9223196}" ; non-localizable
+KSCATEGORY_TOPOLOGY = "{DDA54A40-1E4C-11D1-A050-405705C10000}" ; non-localizable
+KSCATEGORY_REALTIME = "{EB115FFC-10C8-4964-831D-6DCB02E6F23F}" ; non-localizable
+Proxy.CLSID         = "{17CCA71B-ECD7-11D0-B908-00A0C9223196}" ; non-localizable
+
+;Information for FX
+; PropertyKeys
+;Non-localizable
+PKEY_FX_Association         = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},0"
+PKEY_FX_StreamEffectClsid   = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},5"
+PKEY_FX_ModeEffectClsid     = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},6"
+PKEY_FX_EndpointEffectClsid = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},7"
+PKEY_FX_UiClsid             = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},3"
+PKEY_ItemNameDisplay        = "{B725F130-47EF-101A-A5F1-02608C9EEBAC},10"
+
+PKEY_SFX_ProcessingModes_Supported_For_Streaming = "{D3993A3F-99C2-4402-B5EC-A92A0367664B},5"
+PKEY_MFX_ProcessingModes_Supported_For_Streaming = "{D3993A3F-99C2-4402-B5EC-A92A0367664B},6"
+PKEY_EFX_ProcessingModes_Supported_For_Streaming = "{D3993A3F-99C2-4402-B5EC-A92A0367664B},7"
+
+PKEY_Enable_DolbyDAX2	           = "{DB619741-3240-42A9-B35B-66460BED49BA},0"
+
+AUDIO_SIGNALPROCESSINGMODE_DEFAULT = "{C18E2F7E-933D-4965-B7D1-1EEF228D2AF3}"
+
+FX_UI_CLSID       = "{00000000-0000-0000-0000-000000000000}"
+KSNODETYPE_ANY    = "{00000000-0000-0000-0000-000000000000}"
+FX_STREAM_CLSID   = "{D9916F9F-99F7-11E7-BF21-6C0B849889E1}"
+FX_MODE_CLSID     = "{D9916F9C-99F7-11E7-BF21-6C0B849889E1}"
+FX_ENDPOINT_CLSID = "{D9916F9D-99F7-11E7-BF21-6C0B849889E1}"
+;Localizable
+FX_FriendlyName   = "Dolby DAX3"
+
+;Information for EP
+; PropertyKeys
+;Non-localizable
+PKEY_AudioEndpoint_Association               = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},2"
+PKEY_AudioEndpoint_Supports_EventDriven_Mode = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},7"
+PKEY_DAX2_EP_DAPV2_Version_String	     = "{6CA6A085-3041-482B-9113-C61E7F250356},0"
+PKEY_AudioEngine_OEMFormat                   = "{E4870E26-3CC5-4CD2-BA46-CA0A9A70ED04},3"

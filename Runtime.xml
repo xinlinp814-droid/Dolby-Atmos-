@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuntimeConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SystemID value="default" />
+  <DolbyEnabled value="True" />
+  <SelectedMainProfile value="game" />
+  <ProfileList>
+    <ProfileItem Name="game">
+      <SelectedSubProfile>shooter</SelectedSubProfile>
+    </ProfileItem>
+  </ProfileList>
+  <HotkeyConfig>
+    <Setting Name="RadarEnable" Value="CTRL+SHIFT+O" />
+  </HotkeyConfig>
+  <RadarConfig>
+    <Setting Name="RadarEnabled" Value="0" />
+    <Setting Name="RadarSize" Value="1.0" />
+    <Setting Name="RadarTransparency" Value="1.0" />
+    <Setting Name="RadarPositionX" Value="1.0" />
+    <Setting Name="RadarPositionY" Value="0.0" />
+    <Setting Name="RadarSkin" Value="0" />
+  </RadarConfig>
+  <VisualizerConfig>
+    <Setting Name="VisualizerEnabled" Value="0" />
+  </VisualizerConfig>
+</RuntimeConfig>
